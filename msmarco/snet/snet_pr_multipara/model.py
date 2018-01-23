@@ -75,6 +75,7 @@ class Model(object):
 		self.ch_pr = tf.reshape(self.ch_pr, [N, 12, 400, CL])
 		self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 		#print(self.ch.get_shape())
+		print(PL)
 		print(self.ch_pr.get_shape())
 		#print(self.c.get_shape())
 		print(self.c_pr.get_shape())
