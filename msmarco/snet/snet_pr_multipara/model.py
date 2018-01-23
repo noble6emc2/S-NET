@@ -72,6 +72,7 @@ class Model(object):
 
 		gi = []
 		att_vP = []
+		self.ch_pr = tf.reshape(self.ch_pr, [N, 12, PL, CL])
 		print(self.ch.get_shape())
 		print(self.ch_pr.get_shape())
 		print(self.c.get_shape())
