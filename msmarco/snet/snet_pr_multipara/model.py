@@ -67,8 +67,8 @@ class Model(object):
 		att_vP = []
 		
 		for i in range(config.max_para):
-			with tf.variable_scope("emb"):
-				with tf.variable_scope("char"):
+			with tf.variable_scope("emb"+str(i)):
+				with tf.variable_scope("char"+str(i)):
 					ch_emb = tf.reshape(tf.nn.embedding_lookup(\
 						self.char_mat, self.pr_ch), [N * PL, CL, dc])
 					#	self.char_mat, self.ch), [N * PL, CL, dc])
@@ -89,20 +89,20 @@ class Model(object):
 					qh_emb = tf.reshape(qh_emb, [N, QL, 2 * dg])
 					ch_emb = tf.reshape(ch_emb, [N, PL, 2 * dg])
 
-				with tf.name_scope("word"):
+				with tf.name_scope("word"+str(i)):
 					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c)
 					q_emb = tf.nn.embedding_lookup(self.word_mat, self.q)
 
 				c_emb = tf.concat([c_emb, ch_emb], axis=2)
 				q_emb = tf.concat([q_emb, qh_emb], axis=2)
 
-			with tf.variable_scope("encoding"):
+			with tf.variable_scope("encoding"+str(i)):
 				rnn = gru(num_layers=3, num_units=d, batch_size=N, input_size=c_emb.get_shape(
 				).as_list()[-1], keep_prob=config.keep_prob, is_train=self.is_train)
 				c = rnn(c_emb, seq_len=self.c_len)
 				q = rnn(q_emb, seq_len=self.q_len)
 
-			with tf.variable_scope("attention"):
+			with tf.variable_scope("attention"+str(i)):
 				qc_att = dot_attention(c, q, mask=self.q_mask, hidden=d,
 									   keep_prob=config.keep_prob, is_train=self.is_train)
 				rnn = gru(num_layers=1, num_units=d, batch_size=N, input_size=qc_att.get_shape(
@@ -152,7 +152,7 @@ class Model(object):
 		if config.with_passage_ranking:
 			for i in range(config.max_para):
 				# Passage ranking
-				with tf.variable_scope("passage-ranking-attention"):
+				with tf.variable_scope("passage-ranking-attention"+str(i)):
 					vj_P = dropout(att_vP[i], keep_prob=keep_prob, is_train=is_train)
 					r_Q = dropout(init, keep_prob=keep_prob, is_train=is_train)
 					r_P = attention(r_Q, vj_P, mask=self.c_mask, hidden=d,
@@ -164,8 +164,8 @@ class Model(object):
 
 					# Wg
 					concatenate = tf.concat([init,att_rp],axis=2)
-					g = tf.nn.tanh(dense(concatenate, hidden=d, use_bias=False, scope="g"))
-					g_ = dense(g, 1, use_bias=False, scope="g_")
+					g = tf.nn.tanh(dense(concatenate, hidden=d, use_bias=False, scope="g"+str(i)))
+					g_ = dense(g, 1, use_bias=False, scope="g_"+str(i))
 					gi.append(g_)
 			gi_ = tf.convert_to_tensor(gi)
 			gi = tf.nn.softmax(gi_)
