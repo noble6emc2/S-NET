@@ -31,8 +31,10 @@ def get_record_parser(config, is_test=False):
 										   })
 		passage_idxs = tf.reshape(tf.decode_raw(
 			features["passage_idxs"], tf.int32), [para_limit])
+		print("1")
 		passage_pr_idxs = tf.reshape(tf.decode_raw(
 			features["passage_pr_idxs"], tf.int32), [config.max_para, para_limit])
+		print("1")
 		ques_idxs = tf.reshape(tf.decode_raw(
 			features["ques_idxs"], tf.int32), [ques_limit])
 		passage_char_idxs = tf.reshape(tf.decode_raw(
