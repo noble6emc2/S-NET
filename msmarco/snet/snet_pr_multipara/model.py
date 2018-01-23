@@ -84,7 +84,7 @@ class Model(object):
 					#print(self.c.get_shape())
 					print(self.c_pr.get_shape())
 					ch_emb = tf.reshape(tf.nn.embedding_lookup(\
-						self.char_mat, self.ch_pr[:,i,:,:].reshape(N,self.c_maxlen,CL)), [N * PL, CL, dc])
+						self.char_mat, tf.reshape(self.ch_pr[:,i,:,:],[N,self.c_maxlen,CL])), [N * PL, CL, dc])
 					#	self.char_mat, self.ch), [N * PL, CL, dc])
 					qh_emb = tf.reshape(tf.nn.embedding_lookup(
 						self.char_mat, self.qh), [N * QL, CL, dc])
