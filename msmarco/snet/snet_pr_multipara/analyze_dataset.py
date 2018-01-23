@@ -322,33 +322,6 @@ def process_file(max_para_count, filename, data_type, word_counter, char_counter
 						answer_start, answer_end = start_idx, end_idx
 						passage_rank_index = l
 				#####################################################################
-				#fpr_scores = (0,0,0)
-				"""
-				try:
-					start_idx, end_idx = index[0], index[-1]+1
-					#print("\n\nStart index:{} End index:{}".format(start_idx,end_idx))
-					extracted_answer = detokenizer.detokenize(passage_tokens[start_idx:end_idx], return_str=True)
-					detoken_ref_answer = detokenizer.detokenize(answer_token, return_str=True)
-					# ((start_index, end_index)(Fsummary, precision, recall)
-					# (si, ei) > not used from the line below
-					#_, fpr_scores = rouge_span([extracted_answer], [detoken_ref_answer])
-					fpr_scores = rouge_l(normalize_answer(extracted_answer), \
-						normalize_answer(detoken_ref_answer))
-
-				except Exception as e: # for yes/no type questions, index = []
-					#print(e)
-					#print(index)
-					pass
-				if fpr_scores[rouge_metric]>highest_rouge_l[rouge_metric]:
-					highest_rouge_l = fpr_scores
-					answer_texts = [detoken_ref_answer]
-					extracted_answer_text = extracted_answer
-					answer_start, answer_end = start_idx, end_idx
-				# end of answer for loop
-			for k in range(3):
-				if highest_rouge_l[k]<rouge_l_limit:
-					low_rouge_l[k] += 1
-			"""
 			################################################################
 			# individual para scoring:
 			for k in range(3):
@@ -380,20 +353,6 @@ def process_file(max_para_count, filename, data_type, word_counter, char_counter
 				# annotating passage rank
 				passage_rank[passage_rank_index] = 1
 
-				# counting multi para answer span, useless for snet_pr_multipara 
-				# as it has span from only one para
-				"""
-				for j,passage in enumerate(source['passages']):
-					passage_text = passage['passage_text'].replace(
-						"''", '" ').replace("``", '" ').lower()
-					p_token = word_tokenize(" " + passage_text)
-					p_length_temp += len(p_token)
-					if answer_start<=p_length_temp:
-						#passage_rank[j] = 1
-						if answer_end > p_length_temp:
-							multi_para_answer_count += 1
-						break
-				"""
 		else:
 			answer_text = answer[0].strip()
 		"""
@@ -456,19 +415,11 @@ def process_file(max_para_count, filename, data_type, word_counter, char_counter
 		if total%1000 == 0:
 			print("{} questions in total".format(len(examples)))
 			print("{} questions with empty answer".format(empty_answers))
-			print("{} questions with low rouge-l answers".format(low_rouge_l))
-			print("{} questions with low rouge-l answers with multipara".format(low_rouge_l_temp))
-			print("{} questions with multipara answers out of total valid examples".format(multi_para_answer_count))
-			print("{} para exceeding paralength".format(para_length_exceeded))
-			print("{} max paralength".format(max_para_length))
+			print("{} questions with low rouge-l answers with multipara".format(low_rouge_l))
 	random.shuffle(examples)
 	print("{} questions in total".format(len(examples)))
 	print("{} questions with empty answer".format(empty_answers))
-	print("{} questions with low rouge-l answers".format(low_rouge_l))
-	print("{} questions with low rouge-l answers with multipara".format(low_rouge_l_temp))
-	print("{} questions with multipara answers out of total valid examples".format(multi_para_answer_count))
-	print("{} para exceeding paralength".format(para_length_exceeded))
-	print("{} max paralength".format(max_para_length))
+	print("{} questions with low rouge-l answers with multipara".format(low_rouge_l))
 
 
 	"""
