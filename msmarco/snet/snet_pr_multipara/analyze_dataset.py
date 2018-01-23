@@ -534,8 +534,8 @@ def build_features(config, examples, data_type, out_file, word2idx_dict, char2id
 		passage_char_idxs = np.zeros([para_limit, char_limit], dtype=np.int32)
 
 		# for passage ranking
-		passage_pr_idxs = np.zeros([config.max_para, para_limit], dtype=np.int32)
-		passage_char_pr_idxs = np.zeros([config.max_para, para_limit, char_limit], dtype=np.int32)
+		passage_pr_idxs = np.zeros([para_limit*config.max_para], dtype=np.int32)
+		passage_char_pr_idxs = np.zeros([para_limit*config.max_para, char_limit], dtype=np.int32)
 		
 		ques_idxs = np.zeros([ques_limit], dtype=np.int32)
 		ques_char_idxs = np.zeros([ques_limit, char_limit], dtype=np.int32)
@@ -576,14 +576,14 @@ def build_features(config, examples, data_type, out_file, word2idx_dict, char2id
 		# for passage ranking
 		for i, paragraph in enumerate(example["passage_pr_tokens"]):
 			for j, token in enumerate(paragraph):
-				passage_pr_idxs[i,j] = _get_word(token)
+				passage_pr_idxs[i*400+j] = _get_word(token)
 		# for pr
 		for i, paragraph in enumerate(example["passage_pr_chars"]):
 			for j, token in enumerate(paragraph):
 				for k, char in enumerate(token):
 					if k == char_limit:
 						break
-					passage_char_pr_idxs[i, j, k] = _get_char(char)
+					passage_char_pr_idxs[i*400+j, k] = _get_char(char)
 
 		start, end = example["y1s"][-1], example["y2s"][-1]
 		y1[start], y2[end] = 1.0, 1.0
