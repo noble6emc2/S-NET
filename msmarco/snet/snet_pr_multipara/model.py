@@ -85,7 +85,7 @@ class Model(object):
 					#PL = tf.Print(PL,[PL],message="PL:")
 					#self.ch_pr = tf.Print(self.ch_pr,[self.ch_pr.get_shape()],message="ch_pr:")
 					self.ch_pr_ = self.ch_pr[:,i*400:(i+1)*400,:]
-					print(self.ch_pr[:,i*400:(i+1)*400,:].get_shape())
+					print(self.ch_pr_.get_shape())
 					#self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
 					#print(self.ch_pr.get_shape())
