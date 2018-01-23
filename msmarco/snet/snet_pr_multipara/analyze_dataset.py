@@ -296,7 +296,6 @@ def process_file(max_para_count, filename, data_type, word_counter, char_counter
 			for answer_k,k in enumerate(answer):
 				if k.strip() == "":
 					continue
-
 				answer_text = k.strip().lower()
 				answer_text = answer_text[:-1] if answer_text[-1] == "." else answer_text
 				answer_token = word_tokenize(answer_text)
@@ -305,8 +304,8 @@ def process_file(max_para_count, filename, data_type, word_counter, char_counter
 				#####################################################################
 				# individual para scoring:
 				fpr_scores = (0,0,0)
-				for l, passage in enumerate(passage_pr_tokens):
-					index = lcs_tokens(passage, answer_token)
+				for l in range(len(passage_pr_tokens)):
+					index = lcs_tokens(passage_pr_tokens[l], answer_token)
 					try:
 						start_idx, end_idx = l*400 + index[0], l*400 + index[-1]+1
 						extracted_answer = detokenizer.detokenize(passage[index[0]:index[-1]+1], return_str=True)
