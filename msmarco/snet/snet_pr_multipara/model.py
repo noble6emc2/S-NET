@@ -28,7 +28,10 @@ class Model(object):
 		if opt:
 			N, CL = config.batch_size, config.char_limit
 			self.c_maxlen = tf.reduce_max(self.c_len)
+
+			###
 			self.c_maxlen = config.para_limit
+			###
 			self.q_maxlen = tf.reduce_max(self.q_len)
 			self.c = tf.slice(self.c, [0, 0], [N, self.c_maxlen])
 			self.q = tf.slice(self.q, [0, 0], [N, self.q_maxlen])
@@ -82,7 +85,7 @@ class Model(object):
 					#PL = tf.Print(PL,[PL],message="PL:")
 					#self.ch_pr = tf.Print(self.ch_pr,[self.ch_pr.get_shape()],message="ch_pr:")
 					self.ch_pr = self.ch_pr[:,:(i+1)*400,:]
-					print(self.ch_pr[:,:(i+1)*400,:].get_shape())
+					print(self.ch_pr[:,i*400:(i+1)*400,:].get_shape())
 					#self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
 					#print(self.ch_pr.get_shape())
@@ -109,7 +112,7 @@ class Model(object):
 					ch_emb = tf.reshape(ch_emb, [N, PL, 2 * dg])
 
 				with tf.name_scope("word"+str(i)):
-					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c)
+					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c_pr[:,i*400:(i+1)*400])
 					q_emb = tf.nn.embedding_lookup(self.word_mat, self.q)
 
 				c_emb = tf.concat([c_emb, ch_emb], axis=2)

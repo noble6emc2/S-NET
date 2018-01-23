@@ -10,7 +10,7 @@ from util import get_record_parser, convert_tokens, evaluate, get_batch_dataset,
 
 def train(config):
 
-	gpu_options = tf.GPUOptions(visible_device_list="2")
+	gpu_options = tf.GPUOptions(visible_device_list="3")
 	sess_config = tf.ConfigProto(allow_soft_placement=True, gpu_options=gpu_options)
 	sess_config.gpu_options.allow_growth = True
 
