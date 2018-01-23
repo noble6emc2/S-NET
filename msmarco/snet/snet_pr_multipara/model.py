@@ -84,7 +84,7 @@ class Model(object):
 					#CL = tf.Print(CL,[CL],message="CL:")
 					#PL = tf.Print(PL,[PL],message="PL:")
 					#self.ch_pr = tf.Print(self.ch_pr,[self.ch_pr.get_shape()],message="ch_pr:")
-					self.ch_pr = self.ch_pr[:,:(i+1)*400,:]
+					self.ch_pr_ = self.ch_pr[:,i*400:(i+1)*400,:]
 					print(self.ch_pr[:,i*400:(i+1)*400,:].get_shape())
 					#self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
@@ -92,7 +92,7 @@ class Model(object):
 					#print(self.c.get_shape())
 					#print(self.c_pr.get_shape())
 					ch_emb = tf.reshape(tf.nn.embedding_lookup(\
-						self.char_mat, self.ch_pr), [N * PL, CL, dc])
+						self.char_mat, self.ch_pr_), [N * PL, CL, dc])
 					#	self.char_mat, self.ch), [N * PL, CL, dc])
 					qh_emb = tf.reshape(tf.nn.embedding_lookup(
 						self.char_mat, self.qh), [N * QL, CL, dc])
