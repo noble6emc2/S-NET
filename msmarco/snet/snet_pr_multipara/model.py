@@ -39,10 +39,10 @@ class Model(object):
 			self.y2 = tf.slice(self.y2, [0, 0], [N, self.c_maxlen])
 
 			# passage ranking
-			print(self.ch_pr.get_shape())
-			print(self.c_pr.get_shape())
+			#print(self.ch_pr.get_shape())
+			#print(self.c_pr.get_shape())
 			self.c_pr = tf.slice(self.c_pr, [0, 0, 0], [N, 12, self.c_maxlen])
-			#self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0, 0], [N, 12, self.c_maxlen, CL])
+			#self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0, 0], [N, 12*self.c_maxlen, CL])
 		else:
 			self.c_maxlen, self.q_maxlen = config.para_limit, config.ques_limit
 
