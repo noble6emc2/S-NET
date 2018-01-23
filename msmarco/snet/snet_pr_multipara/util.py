@@ -65,7 +65,7 @@ def get_record_parser(config, is_test=False):
 		#return passage_idxs, ques_idxs, passage_char_idxs, ques_char_idxs, y1, y2, qa_id, \
 		#	   passage_pr_idxs, passage_char_pr_idxs, passage_rank
 		return passage_idxs, ques_idxs, passage_char_idxs, ques_char_idxs, y1, y2, qa_id,\
-			   passage_pr_idxs, passage_char_pr_idxs, passage_rank
+			   passage_pr_idxs, passage_char_pr_idxs, passage_rank, y1_pr, y2_pr
 	return parse
 
 
