@@ -589,7 +589,7 @@ def build_features(config, examples, data_type, out_file, word2idx_dict, char2id
 					passage_char_pr_idxs[i*400+j, k] = _get_char(char)
 
 		start, end = example["y1s"][-1], example["y2s"][-1]
-		y1[start], y2[end] = 1.0, 1.0
+		y1[start%400], y2[end%400] = 1.0, 1.0
 		y1_pr[start], y2_pr[end] = 1.0, 1.0
 
 		record = tf.train.Example(features=tf.train.Features(feature={
