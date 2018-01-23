@@ -109,7 +109,10 @@ class Model(object):
 				).as_list()[-1], keep_prob=config.keep_prob, is_train=self.is_train)
 				att = rnn(qc_att, seq_len=self.c_len)
 				# att is the v_P
-				att_vP.append(att)
+				if i==0:
+					att_vP = att
+				else:
+					att_vP = tf.concat([att_vP, att], axis=2)
 
 			"""
 			with tf.variable_scope("match"):
@@ -119,32 +122,32 @@ class Model(object):
 				).as_list()[-1], keep_prob=config.keep_prob, is_train=self.is_train)
 				match = rnn(self_att, seq_len=self.c_len)
 			"""
-			with tf.variable_scope("pointer"):
+		with tf.variable_scope("pointer"):
 
-				# r_Q:
-				init = summ(q[:, :, -2 * d:], d, mask=self.q_mask,
-							keep_prob=config.ptr_keep_prob, is_train=self.is_train)
-				
-				pointer = ptr_net(batch=N, hidden=init.get_shape().as_list(
-				)[-1], keep_prob=config.ptr_keep_prob, is_train=self.is_train)
-				logits1, logits2 = pointer(init, att, d, self.c_mask)
+			# r_Q:
+			init = summ(q[:, :, -2 * d:], d, mask=self.q_mask,
+						keep_prob=config.ptr_keep_prob, is_train=self.is_train)
+			
+			pointer = ptr_net(batch=N, hidden=init.get_shape().as_list(
+			)[-1], keep_prob=config.ptr_keep_prob, is_train=self.is_train)
+			logits1, logits2 = pointer(init, att_vP, d, self.c_mask)
 
-			with tf.variable_scope("predict"):
-				outer = tf.matmul(tf.expand_dims(tf.nn.softmax(logits1), axis=2),
-								  tf.expand_dims(tf.nn.softmax(logits2), axis=1))
-				outer = tf.matrix_band_part(outer, 0, 15)
-				self.yp1 = tf.argmax(tf.reduce_max(outer, axis=2), axis=1)
-				self.yp2 = tf.argmax(tf.reduce_max(outer, axis=1), axis=1)
-				losses = tf.nn.softmax_cross_entropy_with_logits(
-					logits=logits1, labels=self.y1)
-				losses2 = tf.nn.softmax_cross_entropy_with_logits(
-					logits=logits2, labels=self.y2)
-				self.loss = tf.reduce_mean(losses + losses2)
+		with tf.variable_scope("predict"):
+			outer = tf.matmul(tf.expand_dims(tf.nn.softmax(logits1), axis=2),
+							  tf.expand_dims(tf.nn.softmax(logits2), axis=1))
+			outer = tf.matrix_band_part(outer, 0, 15)
+			self.yp1 = tf.argmax(tf.reduce_max(outer, axis=2), axis=1)
+			self.yp2 = tf.argmax(tf.reduce_max(outer, axis=1), axis=1)
+			losses = tf.nn.softmax_cross_entropy_with_logits(
+				logits=logits1, labels=self.y1)
+			losses2 = tf.nn.softmax_cross_entropy_with_logits(
+				logits=logits2, labels=self.y2)
+			self.loss = tf.reduce_mean(losses + losses2)
 
-				# print losses
-				#condition = tf.greater(self.loss, 11)
-				#self.yp1 = tf.where(condition, tf.Print(self.yp1,[self.yp1],message="Yp1:"), self.yp1)
-				#self.yp2 = tf.where(condition, tf.Print(self.yp2,[self.yp2],message="Yp2:"), self.yp1)
+			# print losses
+			#condition = tf.greater(self.loss, 11)
+			#self.yp1 = tf.where(condition, tf.Print(self.yp1,[self.yp1],message="Yp1:"), self.yp1)
+			#self.yp2 = tf.where(condition, tf.Print(self.yp2,[self.yp2],message="Yp2:"), self.yp1)
 
 		for i in range(config.max_para):
 			# Passage ranking
