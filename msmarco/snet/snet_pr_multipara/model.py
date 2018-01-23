@@ -75,7 +75,7 @@ class Model(object):
 			with tf.variable_scope("emb"+str(i)):
 				with tf.variable_scope("char"+str(i)):
 					ch_emb = tf.reshape(tf.nn.embedding_lookup(\
-						self.char_mat, self.pr_ch[:,i,:,:]), [N * PL, CL, dc])
+						self.char_mat, self.ch_pr[:,i,:,:]), [N * PL, CL, dc])
 					#	self.char_mat, self.ch), [N * PL, CL, dc])
 					qh_emb = tf.reshape(tf.nn.embedding_lookup(
 						self.char_mat, self.qh), [N * QL, CL, dc])
