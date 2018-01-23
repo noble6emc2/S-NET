@@ -72,7 +72,9 @@ class Model(object):
 
 		gi = []
 		att_vP = []
+		print(self.ch.get_shape())
 		print(self.ch_pr.get_shape())
+		print(self.c.get_shape())
 		print(self.c_pr.get_shape())
 		for i in range(config.max_para):
 			with tf.variable_scope("emb"+str(i)):
