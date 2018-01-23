@@ -76,10 +76,11 @@ class Model(object):
 		for i in range(config.max_para):
 			with tf.variable_scope("emb"+str(i)):
 				with tf.variable_scope("char"+str(i)):
+					CL = tf.Print(CL,[CL],message="CL:")
+					PL = tf.Print(PL,[PL],message="PL:")
 					self.ch_pr = tf.reshape(self.ch_pr, [N, 12, self.c_maxlen, CL])
 					self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
-					print(PL)
 					print(self.ch_pr.get_shape())
 					#print(self.c.get_shape())
 					print(self.c_pr.get_shape())
