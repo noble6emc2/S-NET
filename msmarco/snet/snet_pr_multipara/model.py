@@ -70,8 +70,8 @@ class Model(object):
 
 		gi = []
 		att_vP = []
-		print(tf.shape(self.ch_pr).as_list())
-		print(tf.shape(self.c_pr).as_list())
+		print(self.ch_pr.get_shape().as_list())
+		print(self.c_pr.get_shape().as_list())
 		for i in range(config.max_para):
 			with tf.variable_scope("emb"+str(i)):
 				with tf.variable_scope("char"+str(i)):
