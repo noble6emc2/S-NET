@@ -74,10 +74,10 @@ class Model(object):
 		att_vP = []
 		self.ch_pr = tf.reshape(self.ch_pr, [N, 12, 400, CL])
 		self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
-		print(self.ch.get_shape())
+		#print(self.ch.get_shape())
 		print(self.ch_pr.get_shape())
 		#print(self.c.get_shape())
-		#print(self.c_pr.get_shape())
+		print(self.c_pr.get_shape())
 		for i in range(config.max_para):
 			with tf.variable_scope("emb"+str(i)):
 				with tf.variable_scope("char"+str(i)):
