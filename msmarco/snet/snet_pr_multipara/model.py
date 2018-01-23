@@ -19,7 +19,7 @@ class Model(object):
 		self.q_mask = tf.cast(self.q, tf.bool)
 		
 		# passage ranking line:
-		self.pr_mask = tf.cast(self.p, tf.bool)
+		#self.pr_mask = tf.cast(self.p, tf.bool)
 
 		self.c_len = tf.reduce_sum(tf.cast(self.c_mask, tf.int32), axis=1)
 		self.q_len = tf.reduce_sum(tf.cast(self.q_mask, tf.int32), axis=1)
@@ -148,29 +148,29 @@ class Model(object):
 			#condition = tf.greater(self.loss, 11)
 			#self.yp1 = tf.where(condition, tf.Print(self.yp1,[self.yp1],message="Yp1:"), self.yp1)
 			#self.yp2 = tf.where(condition, tf.Print(self.yp2,[self.yp2],message="Yp2:"), self.yp1)
+		
+		if config.with_passage_ranking:
+			for i in range(config.max_para):
+				# Passage ranking
+				with tf.variable_scope("passage-ranking-attention"):
+					vj_P = dropout(att_vP[i], keep_prob=keep_prob, is_train=is_train)
+					r_Q = dropout(init, keep_prob=keep_prob, is_train=is_train)
+					r_P = attention(r_Q, vj_P, mask=self.c_mask, hidden=d,
+						keep_prob=config.keep_prob, is_train=self.is_train)
 
-		for i in range(config.max_para):
-			# Passage ranking
-			with tf.variable_scope("passage-ranking-attention"):
-				vj_P = dropout(att_vP[i], keep_prob=keep_prob, is_train=is_train)
-				r_Q = dropout(init, keep_prob=keep_prob, is_train=is_train)
-				r_P = attention(r_Q, vj_P, mask=self.c_mask, hidden=d,
-					keep_prob=config.keep_prob, is_train=self.is_train)
+					#rnn = gru(num_layers=1, num_units=d, batch_size=N, input_size=pr_att.get_shape(
+					#).as_list()[-1], keep_prob=config.keep_prob, is_train=self.is_train)
+					#att_rp = rnn(qc_att, seq_len=self.c_len)
 
-				#rnn = gru(num_layers=1, num_units=d, batch_size=N, input_size=pr_att.get_shape(
-				#).as_list()[-1], keep_prob=config.keep_prob, is_train=self.is_train)
-				#att_rp = rnn(qc_att, seq_len=self.c_len)
-
-				# Wg
-				concatenate = tf.concat([init,att_rp],axis=2)
-				g = tf.nn.tanh(dense(concatenate, hidden=d, use_bias=False, scope="g"))
-				g_ = dense(g, 1, use_bias=False, scope="g_")
-				gi.append(g_)
-		gi_ = tf.convert_to_tensor(gi)
-		gi = tf.nn.softmax(gi_)
-		self.pr_loss = tf.nn.softmax_cross_entropy_with_logits(
-					logits=gi, labels=self.pr)
-
+					# Wg
+					concatenate = tf.concat([init,att_rp],axis=2)
+					g = tf.nn.tanh(dense(concatenate, hidden=d, use_bias=False, scope="g"))
+					g_ = dense(g, 1, use_bias=False, scope="g_")
+					gi.append(g_)
+			gi_ = tf.convert_to_tensor(gi)
+			gi = tf.nn.softmax(gi_)
+			self.pr_loss = tf.nn.softmax_cross_entropy_with_logits(
+						logits=gi, labels=self.pr)
 
 	def print(self):
 		pass
