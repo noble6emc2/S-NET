@@ -7,7 +7,8 @@ class Model(object):
 		self.config = config
 		self.global_step = tf.get_variable('global_step', shape=[], dtype=tf.int32,
 										   initializer=tf.constant_initializer(0), trainable=False)
-		self.c, self.q, self.ch, self.qh, self.y1, self.y2, self.qa_id, self.pr_c, self.pr_ch, self.pr = batch.get_next()
+		self.c, self.q, self.ch, self.qh, self.y1, self.y2, self.qa_id, \
+			self.c_pr, self.ch_pr, self.pr = batch.get_next()
 		self.is_train = tf.get_variable(
 			"is_train", shape=[], dtype=tf.bool, trainable=False)
 		self.word_mat = tf.get_variable("word_mat", initializer=tf.constant(
@@ -36,6 +37,10 @@ class Model(object):
 			self.qh = tf.slice(self.qh, [0, 0, 0], [N, self.q_maxlen, CL])
 			self.y1 = tf.slice(self.y1, [0, 0], [N, self.c_maxlen])
 			self.y2 = tf.slice(self.y2, [0, 0], [N, self.c_maxlen])
+
+			# passage ranking
+			self.c_pr = tf.slice(self.c_pr, [0, 0, 0], [N, 12, self.c_maxlen])
+			self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0, 0], [N, 12, self.c_maxlen, CL])
 		else:
 			self.c_maxlen, self.q_maxlen = config.para_limit, config.ques_limit
 
@@ -70,7 +75,7 @@ class Model(object):
 			with tf.variable_scope("emb"+str(i)):
 				with tf.variable_scope("char"+str(i)):
 					ch_emb = tf.reshape(tf.nn.embedding_lookup(\
-						self.char_mat, self.pr_ch), [N * PL, CL, dc])
+						self.char_mat, self.pr_ch[:,i,:,:]), [N * PL, CL, dc])
 					#	self.char_mat, self.ch), [N * PL, CL, dc])
 					qh_emb = tf.reshape(tf.nn.embedding_lookup(
 						self.char_mat, self.qh), [N * QL, CL, dc])
@@ -90,7 +95,7 @@ class Model(object):
 					ch_emb = tf.reshape(ch_emb, [N, PL, 2 * dg])
 
 				with tf.name_scope("word"+str(i)):
-					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c)
+					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c_pr[:,i,:])
 					q_emb = tf.nn.embedding_lookup(self.word_mat, self.q)
 
 				c_emb = tf.concat([c_emb, ch_emb], axis=2)
