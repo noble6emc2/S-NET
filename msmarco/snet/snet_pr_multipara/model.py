@@ -74,17 +74,18 @@ class Model(object):
 		att_vP = []
 		
 		for i in range(config.max_para):
+			print(i)
 			with tf.variable_scope("emb"+str(i)):
 				with tf.variable_scope("char"+str(i)):
 					CL = tf.Print(CL,[CL],message="CL:")
 					PL = tf.Print(PL,[PL],message="PL:")
 					#self.ch_pr = tf.Print(self.ch_pr,[self.ch_pr.get_shape()],message="ch_pr:")
-					self.ch_pr = tf.reshape(self.ch_pr[:,:400,:], [-1, self.c_maxlen, CL])
+					#self.ch_pr = tf.reshape(self.ch_pr[:,:400,:], [N, self.c_maxlen, CL])
 					#self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
-					print(self.ch_pr.get_shape())
+					#print(self.ch_pr.get_shape())
 					#print(self.c.get_shape())
-					print(self.c_pr.get_shape())
+					#print(self.c_pr.get_shape())
 					ch_emb = tf.reshape(tf.nn.embedding_lookup(\
 						self.char_mat, self.ch), [N * PL, CL, dc])
 					#	self.char_mat, self.ch), [N * PL, CL, dc])
@@ -106,7 +107,7 @@ class Model(object):
 					ch_emb = tf.reshape(ch_emb, [N, PL, 2 * dg])
 
 				with tf.name_scope("word"+str(i)):
-					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c_pr[:,i,:])
+					c_emb = tf.nn.embedding_lookup(self.word_mat, self.c)
 					q_emb = tf.nn.embedding_lookup(self.word_mat, self.q)
 
 				c_emb = tf.concat([c_emb, ch_emb], axis=2)
