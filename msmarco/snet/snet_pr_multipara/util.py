@@ -27,6 +27,8 @@ def get_record_parser(config, is_test=False):
 											   "passage_rank": tf.FixedLenFeature([], tf.string),
 											   "y1": tf.FixedLenFeature([], tf.string),
 											   "y2": tf.FixedLenFeature([], tf.string),
+											   "y1_pr": tf.FixedLenFeature([], tf.string),
+											   "y2_pr": tf.FixedLenFeature([], tf.string),
 											   "id": tf.FixedLenFeature([], tf.int64)
 										   })
 		passage_idxs = tf.reshape(tf.decode_raw(
@@ -55,6 +57,10 @@ def get_record_parser(config, is_test=False):
 		#print(tf.shape(y1))
 		y2 = tf.reshape(tf.decode_raw(
 			features["y2"], tf.float32), [para_limit])
+		y1_pr = tf.reshape(tf.decode_raw(
+			features["y1_pr"], tf.float32), [config.max_para*para_limit])
+		y2_pr = tf.reshape(tf.decode_raw(
+			features["y2_pr"], tf.float32), [config.max_para*para_limit])
 		qa_id = features["id"]
 		#return passage_idxs, ques_idxs, passage_char_idxs, ques_char_idxs, y1, y2, qa_id, \
 		#	   passage_pr_idxs, passage_char_pr_idxs, passage_rank

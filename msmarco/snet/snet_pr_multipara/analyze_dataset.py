@@ -539,8 +539,11 @@ def build_features(config, examples, data_type, out_file, word2idx_dict, char2id
 		
 		ques_idxs = np.zeros([ques_limit], dtype=np.int32)
 		ques_char_idxs = np.zeros([ques_limit, char_limit], dtype=np.int32)
-		y1 = np.zeros([para_limit*config.max_para], dtype=np.float32)
-		y2 = np.zeros([para_limit*config.max_para], dtype=np.float32)
+		y1 = np.zeros([para_limit], dtype=np.float32)
+		y2 = np.zeros([para_limit], dtype=np.float32)
+
+		y1_pr = np.zeros([para_limit*config.max_para], dtype=np.float32)
+		y2_pr = np.zeros([para_limit*config.max_para], dtype=np.float32)
 		#y1 = np.zeros([config.max_para,para_limit], dtype=np.float32)
 		#y2 = np.zeros([config.max_para,para_limit], dtype=np.float32)
 
@@ -587,6 +590,7 @@ def build_features(config, examples, data_type, out_file, word2idx_dict, char2id
 
 		start, end = example["y1s"][-1], example["y2s"][-1]
 		y1[start], y2[end] = 1.0, 1.0
+		y1_pr[start], y2_pr[end] = 1.0, 1.0
 
 		record = tf.train.Example(features=tf.train.Features(feature={
 								  "passage_idxs": tf.train.Feature(bytes_list=tf.train.BytesList(value=[passage_idxs.tostring()])),
@@ -598,6 +602,8 @@ def build_features(config, examples, data_type, out_file, word2idx_dict, char2id
 								  "passage_char_pr_idxs": tf.train.Feature(bytes_list=tf.train.BytesList(value=[passage_char_pr_idxs.tostring()])),
 								  "y1": tf.train.Feature(bytes_list=tf.train.BytesList(value=[y1.tostring()])),
 								  "y2": tf.train.Feature(bytes_list=tf.train.BytesList(value=[y2.tostring()])),
+								  "y1_pr": tf.train.Feature(bytes_list=tf.train.BytesList(value=[y1_pr.tostring()])),
+								  "y2_pr": tf.train.Feature(bytes_list=tf.train.BytesList(value=[y2_pr.tostring()])),
 								  "id": tf.train.Feature(int64_list=tf.train.Int64List(value=[example["id"]]))
 								  }))
 		writer.write(record.SerializeToString())
