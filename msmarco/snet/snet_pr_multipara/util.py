@@ -35,7 +35,7 @@ def get_record_parser(config, is_test=False):
 			features["passage_idxs"], tf.int32), [para_limit])
 		print(passage_idxs.get_shape())
 		passage_pr_idxs = tf.reshape(tf.decode_raw(
-			features["passage_pr_idxs"], tf.int32), [config.max_para, para_limit])
+			features["passage_pr_idxs"], tf.int32), [config.max_para*para_limit])
 		print(passage_pr_idxs.get_shape())
 		ques_idxs = tf.reshape(tf.decode_raw(
 			features["ques_idxs"], tf.int32), [ques_limit])
@@ -44,7 +44,7 @@ def get_record_parser(config, is_test=False):
 			features["passage_char_idxs"], tf.int32), [para_limit, char_limit])
 		print(passage_char_idxs.get_shape())
 		passage_char_pr_idxs = tf.reshape(tf.decode_raw(
-			features["passage_char_pr_idxs"], tf.int32), [config.max_para, para_limit, char_limit])
+			features["passage_char_pr_idxs"], tf.int32), [config.max_para*para_limit, char_limit])
 		print(passage_char_pr_idxs.get_shape())
 		passage_rank = tf.reshape(tf.decode_raw(
 			features["passage_rank"], tf.float32), [config.max_para])
