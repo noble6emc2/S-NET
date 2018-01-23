@@ -41,8 +41,8 @@ class Model(object):
 			# passage ranking
 			#print(self.ch_pr.get_shape())
 			#print(self.c_pr.get_shape())
-			self.c_pr = tf.slice(self.c_pr, [0, 0, 0], [N, 12, self.c_maxlen])
-			#self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0, 0], [N, 12*self.c_maxlen, CL])
+			self.c_pr = tf.slice(self.c_pr, [0, 0], [N, config.max_para*config.para_limit])
+			self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0], [N, config.max_para*config.para_limit, CL])
 		else:
 			self.c_maxlen, self.q_maxlen = config.para_limit, config.ques_limit
 
