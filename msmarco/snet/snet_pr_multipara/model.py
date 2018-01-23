@@ -79,7 +79,7 @@ class Model(object):
 					CL = tf.Print(CL,[CL],message="CL:")
 					PL = tf.Print(PL,[PL],message="PL:")
 					self.ch_pr = tf.Print(self.ch_pr,[self.ch_pr.get_shape()],message="ch_pr:")
-					self.ch_pr = tf.reshape(self.ch_pr[:,0,:,:], [-1, self.c_maxlen, CL])
+					self.ch_pr = tf.reshape(self.ch_pr[:,:400,:], [-1, self.c_maxlen, CL])
 					#self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
 					print(self.ch_pr.get_shape())
