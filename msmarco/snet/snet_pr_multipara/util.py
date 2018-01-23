@@ -77,7 +77,7 @@ def get_batch_dataset(record_file, parser, config):
 		buckets = [tf.constant(num) for num in range(*config.bucket_range)]
 
 		def key_func(passage_idxs, ques_idxs, passage_char_idxs, ques_char_idxs, y1, y2, qa_id, \
-					passage_pr_idxs, passage_pr_char_idxs, passage_rank):
+					passage_pr_idxs, passage_pr_char_idxs, passage_rank, y1_pr, y2_pr):
 			c_len = tf.reduce_sum(
 				tf.cast(tf.cast(passage_idxs, tf.bool), tf.int32))
 			t = tf.clip_by_value(buckets, 0, c_len)
