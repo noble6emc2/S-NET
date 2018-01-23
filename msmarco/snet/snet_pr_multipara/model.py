@@ -42,7 +42,7 @@ class Model(object):
 			print(self.ch_pr.get_shape())
 			print(self.c_pr.get_shape())
 			self.c_pr = tf.slice(self.c_pr, [0, 0, 0], [N, 12, self.c_maxlen])
-			self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0, 0], [N, 12, self.c_maxlen, CL])
+			#self.ch_pr = tf.slice(self.ch_pr, [0, 0, 0, 0], [N, 12, self.c_maxlen, CL])
 		else:
 			self.c_maxlen, self.q_maxlen = config.para_limit, config.ques_limit
 
@@ -79,7 +79,7 @@ class Model(object):
 					CL = tf.Print(CL,[CL],message="CL:")
 					PL = tf.Print(PL,[PL],message="PL:")
 					self.ch_pr = tf.reshape(self.ch_pr[:,0,:,:], [N, self.c_maxlen, CL])
-					self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
+					#self.c_pr = tf.reshape(self.c_pr, [N, 12, PL])
 					#print(self.ch.get_shape())
 					print(self.ch_pr.get_shape())
 					#print(self.c.get_shape())
