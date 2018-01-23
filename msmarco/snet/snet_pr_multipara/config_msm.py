@@ -105,7 +105,7 @@ flags.DEFINE_boolean("with_passage_ranking", False, "Enable Passage Ranking part
 flags.DEFINE_integer("bucket_range", [40, 401, 40], "the range of bucket")
 
 flags.DEFINE_integer("rouge_metric", 0, "# 0 = f, 1 = p, 2 = r")
-flags.DEFINE_integer("batch_size", 16, "Batch size") # 64
+flags.DEFINE_integer("batch_size", 32, "Batch size") # 64
 flags.DEFINE_integer("num_steps", 50000, "Number of steps")
 flags.DEFINE_integer("checkpoint", 1000,
 					 "checkpoint to save and evaluate the model")
