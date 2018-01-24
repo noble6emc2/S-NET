@@ -68,20 +68,21 @@ class Model(object):
 				gradients, config.grad_clip)
 			self.train_op = self.opt.apply_gradients(
 				zip(capped_grads, variables), global_step=self.global_step)
-			##########################################
-			grads_pr = self.opt.compute_gradients(self.pr_loss)
-			gradients_pr, variables_pr = zip(*grads_pr)
-			capped_grads_pr, _ = tf.clip_by_global_norm(
-				gradients_pr, config.grad_clip)
-			self.train_op_pr = self.opt.apply_gradients(
-				zip(capped_grads_pr, variables_pr), global_step=self.global_step)
-			##########################################
-			grads_ee = self.opt.compute_gradients(self.e_loss)
-			gradients_ee, variables_ee = zip(*grads_ee)
-			capped_grads_ee, _ = tf.clip_by_global_norm(
-				gradients_ee, config.grad_clip)
-			self.train_op_ee = self.opt.apply_gradients(
-				zip(capped_grads_ee, variables_ee), global_step=self.global_step)
+			if config.with_passage_ranking:
+				##########################################
+				grads_pr = self.opt.compute_gradients(self.pr_loss)
+				gradients_pr, variables_pr = zip(*grads_pr)
+				capped_grads_pr, _ = tf.clip_by_global_norm(
+					gradients_pr, config.grad_clip)
+				self.train_op_pr = self.opt.apply_gradients(
+					zip(capped_grads_pr, variables_pr), global_step=self.global_step)
+				##########################################
+				grads_ee = self.opt.compute_gradients(self.e_loss)
+				gradients_ee, variables_ee = zip(*grads_ee)
+				capped_grads_ee, _ = tf.clip_by_global_norm(
+					gradients_ee, config.grad_clip)
+				self.train_op_ee = self.opt.apply_gradients(
+					zip(capped_grads_ee, variables_ee), global_step=self.global_step)
 	def ready(self):
 		config = self.config
 		N, PL, QL, CL, d, dc, dg = config.batch_size, self.c_maxlen, self.q_maxlen, config.char_limit, config.hidden, config.char_dim, config.char_hidden
