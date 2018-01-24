@@ -12,7 +12,7 @@ def train(config):
 
 	gpu_options = sess_config = None
 	if config.use_cudnn:
-		gpu_options = tf.GPUOptions(visible_device_list="2,3")
+		gpu_options = tf.GPUOptions(visible_device_list=config.gpu_id)
 		sess_config = tf.ConfigProto(allow_soft_placement=True, gpu_options=gpu_options)
 		sess_config.gpu_options.allow_growth = True
 	else:

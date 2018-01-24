@@ -276,6 +276,10 @@ def process_file(max_para_count, filename, data_type, word_counter, char_counter
 		highest_rouge_l_temp = np.zeros(3)
 		individual_rank = np.zeros(max_para_count,dtype=np.int32)
 		#for pi, p in enumerate(article["paragraphs"]):
+		if len(source['passages'])>max_para_count:
+			line = fh.readline()
+			empty_answers += 1
+			continue
 		for j,passage in enumerate(source['passages']):
 			passage_text = passage['passage_text'].replace(
 				"''", '" ').replace("``", '" ').lower()
