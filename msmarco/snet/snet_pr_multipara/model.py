@@ -150,8 +150,8 @@ class Model(object):
 				else:
 					att_vP = tf.concat([att_vP, att], axis=1)
 				#att = tf.Print(att,[tf.shape(att)],message="att:")
-				print(att.get_shape().as_list())
-				print(att_vP.get_shape().as_list())
+				print("att:",att.get_shape().as_list())
+				print("att_vP:",att_vP.get_shape().as_list())
 			#att_vP = tf.Print(att_vP,[tf.shape(att_vP)],message="att_vP:")
 			"""
 			with tf.variable_scope("match"):
@@ -166,7 +166,7 @@ class Model(object):
 			# r_Q:
 			init = summ(q[:, :, -2 * d:], d, mask=self.q_mask,
 						keep_prob=config.ptr_keep_prob, is_train=self.is_train)
-			
+			print("rQ:",init.get_shape().as_list())
 			pointer = ptr_net(batch=N, hidden=init.get_shape().as_list(
 			)[-1], keep_prob=config.ptr_keep_prob, is_train=self.is_train)
 			logits1, logits2 = pointer(init, att, d, self.c_mask)
