@@ -29,10 +29,10 @@ glove_file = os.path.join(path, "snetP_data", "data", "glove", "glove.840B.300d.
 #target_dir = os.path.join(hdd2, "snetP_data", "snet_data")
 
 #target_dir = "data"
-target_dir = os.path.join(path, "snetP_data", "rnet", "msmarco", "pr", "new")
-log_dir = os.path.join(path, "snetP_data", "snet", "snet_pr", "log", "event")
-save_dir = os.path.join(path, "snetP_data", "snet", "snet_pr", "log", "model")
-answer_dir = os.path.join(path, "snetP_data", "snet", "snet_pr", "log", "answer")
+target_dir = os.path.join(path, "snetP_data", "rnet", "msmarco", "pr")
+log_dir = os.path.join(path, "snetP_data", "snet", "snet_pr_multipara", "log", "event")
+save_dir = os.path.join(path, "snetP_data", "snet", "snet_pr_multipara", "log", "model")
+answer_dir = os.path.join(path, "snetP_data", "snet", "snet_pr_multipara", "log", "answer")
 
 train_record_file = os.path.join(target_dir, "train.tfrecords")
 dev_record_file = os.path.join(target_dir, "dev.tfrecords")
@@ -101,17 +101,15 @@ flags.DEFINE_integer("num_threads", 4, "Number of threads in input pipeline")
 flags.DEFINE_boolean("use_cudnn", True, "Whether to use cudnn rnn (should be False for CPU)")
 flags.DEFINE_boolean("is_bucket", True, "build bucket batch iterator or not")
 flags.DEFINE_boolean("line_limit_prepro", False, "limit prepro to limited number of lines for POC")
-flags.DEFINE_boolean("with_passage_ranking", False, "Enable Passage Ranking part")
+flags.DEFINE_boolean("with_passage_ranking", True, "Enable Passage Ranking part")
 flags.DEFINE_integer("bucket_range", [40, 401, 40], "the range of bucket")
 
 flags.DEFINE_integer("rouge_metric", 0, "# 0 = f, 1 = p, 2 = r")
 flags.DEFINE_integer("batch_size", 16, "Batch size") # 64
 flags.DEFINE_integer("num_steps", 50000, "Number of steps")
-flags.DEFINE_integer("checkpoint", 1000,
-					 "checkpoint to save and evaluate the model")
+flags.DEFINE_integer("checkpoint", 1000, "checkpoint to save and evaluate the model")
 flags.DEFINE_integer("period", 100, "period to save batch loss")
-flags.DEFINE_integer("val_num_batches", 150,
-					 "Number of batches to evaluate the model")
+flags.DEFINE_integer("val_num_batches", 150, "Number of batches to evaluate the model")
 flags.DEFINE_float("init_lr", 1.0, "Initial learning rate for Adadelta")
 flags.DEFINE_float("keep_prob", 0.9, "Dropout keep prob in rnn") #0.7
 flags.DEFINE_float("ptr_keep_prob", 0.9, "Dropout keep prob for pointer network") #0.7
