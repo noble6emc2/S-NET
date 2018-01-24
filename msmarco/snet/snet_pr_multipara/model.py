@@ -148,7 +148,7 @@ class Model(object):
 					att_vP = att
 				else:
 					att_vP = tf.concat([att_vP, att], axis=2)
-			att_vP = tf.Print(att_vP,[att_vP.get_shape()],message="att_vP:")
+			att_vP = tf.Print(att_vP,[tf.shape(att_vP)],message="att_vP:")
 			"""
 			with tf.variable_scope("match"):
 				self_att = dot_attention(
