@@ -79,7 +79,7 @@ def train(config):
 				sess.run(tf.assign(model.is_train,
 								   tf.constant(True, dtype=tf.bool)))
 
-				dev_loss = metrics["loss"]
+				dev_loss = metrics["loss_ee"]
 				if dev_loss < loss_save:
 					loss_save = dev_loss
 					patience = 0
