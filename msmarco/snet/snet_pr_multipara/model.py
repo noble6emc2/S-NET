@@ -213,7 +213,7 @@ class Model(object):
 			gi = tf.nn.softmax(gi_)
 			self.losses3 = tf.nn.softmax_cross_entropy_with_logits(
 						logits=gi, labels=self.pr)
-			self.pr_loss = tf.reduce_mean(losses3)
+			self.pr_loss = tf.reduce_mean(self.losses3)
 
 			#assert(self.pr_loss.get_shape().as_list() == self.loss.get_shape().as_list())
 			self.r = tf.get_variable("r", [1])
