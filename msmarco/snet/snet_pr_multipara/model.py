@@ -148,7 +148,8 @@ class Model(object):
 					att_vP = att
 				else:
 					att_vP = tf.concat([att_vP, att], axis=2)
-				att_vP = tf.Print(att,[tf.shape(att)],message="att:")
+				att = tf.Print(att,[tf.shape(att)],message="att:")
+				print(att.get_shape().as_list())
 			att_vP = tf.Print(att_vP,[tf.shape(att_vP)],message="att_vP:")
 			"""
 			with tf.variable_scope("match"):
