@@ -217,8 +217,8 @@ class Model(object):
 
 			#assert(self.pr_loss.get_shape().as_list() == self.loss.get_shape().as_list())
 			self.r = tf.get_variable("r", [1])
-			self.e_loss1 = tf.multiply(r,self.loss)
-			self.e_loss2 = tf.multiply(tf.subtract(tf.constant(1.0),r),self.loss)
+			self.e_loss1 = tf.multiply(self.r,self.loss)
+			self.e_loss2 = tf.multiply(tf.subtract(tf.constant(1.0),self.r),self.loss)
 			self.e_loss = tf.add(self.e_loss1, self.e_loss2)
 
 	def print(self):
