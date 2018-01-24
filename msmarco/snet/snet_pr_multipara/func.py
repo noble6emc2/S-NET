@@ -103,6 +103,21 @@ class native_gru:
 			res = outputs[-1]
 		return res
 
+class pr_attention:
+	def __init__(self, batch, hidden, keep_prob=1.0, is_train=None, scope="pr_attention"):
+		self.batch = batch
+		self.scope = scope
+		self.keep_prob = keep_prob
+		self.is_train = is_train
+		self.dropout_mask = dropout(tf.ones(
+			[batch, hidden], dtype=tf.float32), keep_prob=keep_prob, is_train=is_train)
+
+	def __call__(self, init, match, d, mask):
+		with tf.variable_scope(self.scope):
+			d_match = dropout(match, keep_prob=self.keep_prob,
+							  is_train=self.is_train)
+			inp, logits1 = pointer(d_match, init * self.dropout_mask, d, mask, "pr_pointer")
+			return inp
 
 class ptr_net:
 	def __init__(self, batch, hidden, keep_prob=1.0, is_train=None, scope="ptr_net"):
@@ -126,6 +141,16 @@ class ptr_net:
 			_, logits2 = pointer(d_match, state * self.dropout_mask, d, mask)
 			return logits1, logits2
 
+def pointer(inputs, state, hidden, mask, scope="pointer"):
+	with tf.variable_scope(scope):
+		u = tf.concat([tf.tile(tf.expand_dims(state, axis=1), [
+			1, tf.shape(inputs)[1], 1]), inputs], axis=2)
+		s0 = tf.nn.tanh(dense(u, hidden, use_bias=False, scope="s0"))
+		s = dense(s0, 1, use_bias=False, scope="s")
+		s1 = softmax_mask(tf.squeeze(s, [2]), mask)
+		a = tf.expand_dims(tf.nn.softmax(s1), axis=2)
+		res = tf.reduce_sum(a * inputs, axis=1)
+		return res, s1
 
 def dropout(args, keep_prob, is_train, mode="recurrent"):
 	if keep_prob < 1.0:
@@ -144,18 +169,6 @@ def dropout(args, keep_prob, is_train, mode="recurrent"):
 
 def softmax_mask(val, mask):
 	return -INF * (1 - tf.cast(mask, tf.float32)) + val
-
-
-def pointer(inputs, state, hidden, mask, scope="pointer"):
-	with tf.variable_scope(scope):
-		u = tf.concat([tf.tile(tf.expand_dims(state, axis=1), [
-			1, tf.shape(inputs)[1], 1]), inputs], axis=2)
-		s0 = tf.nn.tanh(dense(u, hidden, use_bias=False, scope="s0"))
-		s = dense(s0, 1, use_bias=False, scope="s")
-		s1 = softmax_mask(tf.squeeze(s, [2]), mask)
-		a = tf.expand_dims(tf.nn.softmax(s1), axis=2)
-		res = tf.reduce_sum(a * inputs, axis=1)
-		return res, s1
 
 
 def summ(memory, hidden, mask, keep_prob=1.0, is_train=None, scope="summ"):

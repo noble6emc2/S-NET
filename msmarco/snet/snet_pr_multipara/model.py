@@ -1,5 +1,5 @@
 import tensorflow as tf
-from func import cudnn_gru, native_gru, dot_attention, summ, dropout, ptr_net, attention, dense
+from func import cudnn_gru, native_gru, dot_attention, summ, dropout, ptr_net, pr_attention, dense
 
 
 class Model(object):
@@ -193,19 +193,19 @@ class Model(object):
 			for i in range(config.max_para):
 				# Passage ranking
 				with tf.variable_scope("passage-ranking-attention"+str(i)):
-					att_vP = tf.Print(att_vP,[att_vP.get_shape()],message="att_vP:")
-					vj_P = dropout(att_vP[:,i*400:(i+1)*400], keep_prob=config.keep_prob,\
-						is_train=self.is_train)
-					r_Q = dropout(init, keep_prob=config.keep_prob, is_train=self.is_train)
-					r_P = attention(r_Q, vj_P, mask=self.c_mask, hidden=d,\
-						keep_prob=config.keep_prob, is_train=self.is_train)
+					dropout_mask = dropout(tf.ones([N, d], dtype=tf.float32),
+						keep_prob=keep_prob, is_train=is_train)
 
-					#rnn = gru(num_layers=1, num_units=d, batch_size=N, input_size=pr_att.get_shape(
-					#).as_list()[-1], keep_prob=config.keep_prob, is_train=self.is_train)
-					#att_rp = rnn(qc_att, seq_len=self.c_len)
+					att_vP = tf.Print(att_vP,[att_vP.get_shape()],message="att_vP:")
+					vj_P = att_vP[:,i*400:(i+1)*400,:]
+					#r_Q = dropout(init, keep_prob=config.keep_prob, is_train=self.is_train)
+
+					pr_att = pr_attention(batch=N, hidden=init.get_shape().as_list(
+						)[-1], keep_prob=config.ptr_keep_prob, is_train=self.is_train)
+					r_P = pr_att(init, vj_P, d, self.c_mask)
 
 					# Wg
-					concatenate = tf.concat([init,att_rp],axis=2)
+					concatenate = tf.concat([init,r_P],axis=1)
 					g = tf.nn.tanh(dense(concatenate, hidden=d, use_bias=False, scope="g"+str(i)))
 					g_ = dense(g, 1, use_bias=False, scope="g_"+str(i))
 					gi.append(g_)
