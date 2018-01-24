@@ -189,8 +189,8 @@ class Model(object):
 			for i in range(config.max_para):
 				# Passage ranking
 				with tf.variable_scope("passage-ranking-attention"+str(i)):
-					vj_P = dropout(att_vP[i], keep_prob=config.keep_prob, is_train=is_train)
-					r_Q = dropout(init, keep_prob=config.keep_prob, is_train=is_train)
+					vj_P = dropout(att_vP[i], keep_prob=config.keep_prob, is_train=self.is_train)
+					r_Q = dropout(init, keep_prob=config.keep_prob, is_train=self.is_train)
 					r_P = attention(r_Q, vj_P, mask=self.c_mask, hidden=d,
 						keep_prob=config.keep_prob, is_train=self.is_train)
 
