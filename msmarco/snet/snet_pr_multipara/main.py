@@ -10,9 +10,13 @@ from util import get_record_parser, convert_tokens, evaluate, get_batch_dataset,
 
 def train(config):
 
-	gpu_options = tf.GPUOptions(visible_device_list="3")
-	sess_config = tf.ConfigProto(allow_soft_placement=True, gpu_options=gpu_options)
-	sess_config.gpu_options.allow_growth = True
+	if config.use_cudnn:
+		gpu_options = tf.GPUOptions(visible_device_list="3")
+		sess_config = tf.ConfigProto(allow_soft_placement=True, gpu_options=gpu_options)
+		sess_config.gpu_options.allow_growth = True
+	else:
+		gpu_options = tf.GPUOptions(visible_device_list="")
+		sess_config = tf.ConfigProto(allow_soft_placement=True, gpu_options=gpu_options)
 
 	with open(config.word_emb_file, "r") as fh:
 		word_mat = np.array(json.load(fh), dtype=np.float32)
