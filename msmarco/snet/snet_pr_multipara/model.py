@@ -193,15 +193,15 @@ class Model(object):
 			for i in range(config.max_para):
 				# Passage ranking
 				with tf.variable_scope("passage-ranking-attention"+str(i)):
-					dropout_mask = dropout(tf.ones([N, d], dtype=tf.float32),
-						keep_prob=keep_prob, is_train=is_train)
+					#dropout_mask = dropout(tf.ones([N, d], dtype=tf.float32),
+					#	keep_prob=config.keep_prob, is_train=is_train)
 
 					att_vP = tf.Print(att_vP,[att_vP.get_shape()],message="att_vP:")
 					vj_P = att_vP[:,i*400:(i+1)*400,:]
 					#r_Q = dropout(init, keep_prob=config.keep_prob, is_train=self.is_train)
 
 					pr_att = pr_attention(batch=N, hidden=init.get_shape().as_list(
-						)[-1], keep_prob=config.ptr_keep_prob, is_train=self.is_train)
+						)[-1], keep_prob=config.keep_prob, is_train=self.is_train)
 					r_P = pr_att(init, vj_P, d, self.c_mask)
 
 					# Wg
