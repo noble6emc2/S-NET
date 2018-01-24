@@ -68,7 +68,20 @@ class Model(object):
 				gradients, config.grad_clip)
 			self.train_op = self.opt.apply_gradients(
 				zip(capped_grads, variables), global_step=self.global_step)
-
+			##########################################
+			grads_pr = self.opt.compute_gradients(self.pr_loss)
+			gradients_pr, variables_pr = zip(*grads_pr)
+			capped_grads_pr, _ = tf.clip_by_global_norm(
+				gradients_pr, config.grad_clip)
+			self.train_op_pr = self.opt.apply_gradients(
+				zip(capped_grads_pr, variables_pr), global_step=self.global_step)
+			##########################################
+			grads_ee = self.opt.compute_gradients(self.e_loss)
+			gradients_ee, variables_ee = zip(*grads_ee)
+			capped_grads_ee, _ = tf.clip_by_global_norm(
+				gradients_ee, config.grad_clip)
+			self.train_op_ee = self.opt.apply_gradients(
+				zip(capped_grads_ee, variables_ee), global_step=self.global_step)
 	def ready(self):
 		config = self.config
 		N, PL, QL, CL, d, dc, dg = config.batch_size, self.c_maxlen, self.q_maxlen, config.char_limit, config.hidden, config.char_dim, config.char_hidden
@@ -164,6 +177,7 @@ class Model(object):
 				logits=logits1, labels=self.y1)
 			losses2 = tf.nn.softmax_cross_entropy_with_logits(
 				logits=logits2, labels=self.y2)
+			#losses1_2 = tf.reduce_mean(losses1_2, axis=0)
 			self.loss = tf.reduce_mean(losses + losses2)
 
 			# print losses
@@ -191,8 +205,15 @@ class Model(object):
 					gi.append(g_)
 			gi_ = tf.convert_to_tensor(gi)
 			gi = tf.nn.softmax(gi_)
-			self.pr_loss = tf.nn.softmax_cross_entropy_with_logits(
+			self.losses3 = tf.nn.softmax_cross_entropy_with_logits(
 						logits=gi, labels=self.pr)
+			self.pr_loss = tf.reduce_mean(losses3)
+
+			#assert(self.pr_loss.get_shape().as_list() == self.loss.get_shape().as_list())
+			self.r = tf.get_variable("r", [1])
+			self.e_loss1 = tf.multiply(r,self.loss)
+			self.e_loss2 = tf.multiply(tf.subtract(tf.constant(1.0),r),self.loss)
+			self.e_loss = tf.add(self.e_loss1, self.e_loss2)
 
 	def print(self):
 		pass
@@ -200,5 +221,11 @@ class Model(object):
 	def get_loss(self):
 		return self.loss
 
+	def get_pr_loss(self):
+		return self.pr_loss
+
+	def get_e_loss(self):
+		return self.e_loss
+		
 	def get_global_step(self):
 		return self.global_step
