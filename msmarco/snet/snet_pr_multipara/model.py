@@ -194,7 +194,7 @@ class Model(object):
 				# Passage ranking
 				with tf.variable_scope("passage-ranking-attention"+str(i)):
 
-					att_vP = tf.Print(att_vP,[att_vP.get_shape()],message="att_vP:")
+					#att_vP = tf.Print(att_vP,[att_vP.get_shape()],message="att_vP:")
 					vj_P = att_vP[:,i*400:(i+1)*400,:]
 					pr_att = pr_attention(batch=N, hidden=init.get_shape().as_list(
 						)[-1], keep_prob=config.keep_prob, is_train=self.is_train)
