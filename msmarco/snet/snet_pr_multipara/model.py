@@ -208,7 +208,7 @@ class Model(object):
 			gi_ = tf.convert_to_tensor(gi)
 			gi = tf.nn.softmax(gi_)
 			self.losses3 = tf.nn.softmax_cross_entropy_with_logits(
-						logits=gi, labels=self.pr)
+						logits=gi, labels=tf.reshape(self.pr,[-1,1]))
 			self.pr_loss = tf.reduce_mean(self.losses3)
 
 			#assert(self.pr_loss.get_shape().as_list() == self.loss.get_shape().as_list())
